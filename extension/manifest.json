@@ -8,7 +8,11 @@
                 "https://*.brasiljunior.org.br/*"
             ],
             "js": [
-                "js/content.js"
+                "./js/api.js",
+                "./js/csv.js",
+                "./js/reports.js",
+                "./js/ui.js",
+                "./js/content.js"
             ]
         }
     ],
@@ -21,6 +25,6 @@
         "https://api.brasiljunior.org.br/*"
     ],
     "background": {
-        "service_worker": "js/background.js"
+        "service_worker": "./js/background.js"
     }
 }

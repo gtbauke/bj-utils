@@ -1,0 +1,29 @@
+{
+    "name": "bj-utils",
+    "version": "1.0.0",
+    "description": "",
+    "homepage": "https://github.com/gtbauke/bj-utils#readme",
+    "bugs": {
+        "url": "https://github.com/gtbauke/bj-utils/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gtbauke/bj-utils.git"
+    },
+    "license": "MIT",
+    "author": "Gustavo T. Bauke",
+    "type": "module",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "tsx src/index.ts"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.4.11",
+        "@types/node": "^25.5.2",
+        "tsx": "^4.21.0",
+        "typescript": "^6.0.2"
+    },
+    "dependencies": {
+        "dotenv": "^17.4.1"
+    }
+}
