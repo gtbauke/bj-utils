@@ -1,11 +1,12 @@
 import { appendRowsToSheet } from "../api/google-sheets.api.js";
 import { syncFederatedEJs } from "../api/portal.api.js";
 import { fetchMemberRolesForEJ } from "../reports/member_roles.report.js";
+import { fetchMemberDurationForEJ } from "../reports/member_duration.report.js";
 import { fetchMembersForEJ } from "../reports/members.report.js";
 import { fetchRoleHistoriesForEJ } from "../reports/roles.report.js";
 import type { RequestContext } from "../utils/requests/context.utils.js";
 
-type ReportType = "members" | "roles" | "member_roles";
+type ReportType = "members" | "roles" | "member_roles" | "member_duration";
 
 async function executeReportInContext(
 	context: RequestContext,
@@ -22,6 +23,9 @@ async function executeReportInContext(
 			break;
 		case "member_roles":
 			reportDisplayName = "Member Roles History (Full)";
+			break;
+		case "member_duration":
+			reportDisplayName = "Member Duration/Stay";
 			break;
 	}
 
@@ -56,6 +60,10 @@ async function executeReportInContext(
 			results = await Promise.all(
 				batch.map((ej) => fetchMemberRolesForEJ(ej, context)),
 			);
+		} else if (reportType === "member_duration") {
+			results = await Promise.all(
+				batch.map((ej) => fetchMemberDurationForEJ(ej, context)),
+			);
 		}
 
 		results.forEach((rows) => {
@@ -80,6 +88,9 @@ async function executeReportInContext(
 			case "member_roles":
 				sheetTitle = "Member Roles History";
 				break;
+			case "member_duration":
+				sheetTitle = "Member Duration";
+				break;
 		}
 		await appendRowsToSheet(context, sheetTitle, allData);
 	} else {
@@ -93,3 +104,5 @@ export const runRolesReportAction = async (context: RequestContext) =>
 	executeReportInContext(context, "roles");
 export const runMemberRolesReportAction = async (context: RequestContext) =>
 	executeReportInContext(context, "member_roles");
+export const runMemberDurationReportAction = async (context: RequestContext) =>
+	executeReportInContext(context, "member_duration");

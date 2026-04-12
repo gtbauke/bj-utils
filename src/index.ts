@@ -5,6 +5,7 @@ import {
 	runMemberRolesReportAction,
 	runMembersReportAction,
 	runRolesReportAction,
+	runMemberDurationReportAction,
 } from "./actions/reports.action.js";
 import { RequestContext } from "./utils/requests/context.utils.js";
 
@@ -49,6 +50,12 @@ async function main() {
 						"Fetches FULL role histories (all time) of all federated EJs and appends them to Google Sheets.",
 				},
 				{
+					name: "Duração de Membros na EJ (Report)",
+					value: "member_duration",
+					description:
+						"Calculates total time each member stayed in the EJ based on membership history.",
+				},
+				{
 					name: "Sair / Exit",
 					value: "exit",
 				},
@@ -64,6 +71,9 @@ async function main() {
 				break;
 			case "member_roles":
 				await context.runWithContext([runMemberRolesReportAction]);
+				break;
+			case "member_duration":
+				await context.runWithContext([runMemberDurationReportAction]);
 				break;
 			case "exit":
 				exit = true;
