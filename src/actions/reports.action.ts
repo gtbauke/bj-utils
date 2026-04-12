@@ -4,13 +4,20 @@ import { fetchMemberRolesForEJ } from "../reports/member_roles.report.js";
 import { fetchMemberDurationForEJ } from "../reports/member_duration.report.js";
 import { fetchMembersForEJ } from "../reports/members.report.js";
 import { fetchRoleHistoriesForEJ } from "../reports/roles.report.js";
+import { fetchMemberParticipationForEJ } from "../reports/member_participation.report.js";
 import type { RequestContext } from "../utils/requests/context.utils.js";
 
-type ReportType = "members" | "roles" | "member_roles" | "member_duration";
+type ReportType =
+	| "members"
+	| "roles"
+	| "member_roles"
+	| "member_duration"
+	| "member_participation";
 
 async function executeReportInContext(
 	context: RequestContext,
 	reportType: ReportType,
+	year?: number,
 ) {
 	console.log("\n-----------------------------------------");
 	let reportDisplayName = "";
@@ -26,6 +33,9 @@ async function executeReportInContext(
 			break;
 		case "member_duration":
 			reportDisplayName = "Member Duration/Stay";
+			break;
+		case "member_participation":
+			reportDisplayName = `Member Participation (${year})`;
 			break;
 	}
 
@@ -64,6 +74,12 @@ async function executeReportInContext(
 			results = await Promise.all(
 				batch.map((ej) => fetchMemberDurationForEJ(ej, context)),
 			);
+		} else if (reportType === "member_participation") {
+			results = await Promise.all(
+				batch.map((ej) =>
+					fetchMemberParticipationForEJ(ej, context, year || 2026),
+				),
+			);
 		}
 
 		results.forEach((rows) => {
@@ -91,6 +107,9 @@ async function executeReportInContext(
 			case "member_duration":
 				sheetTitle = "Member Duration";
 				break;
+			case "member_participation":
+				sheetTitle = "Member Participation";
+				break;
 		}
 		await appendRowsToSheet(context, sheetTitle, allData);
 	} else {
@@ -106,3 +125,8 @@ export const runMemberRolesReportAction = async (context: RequestContext) =>
 	executeReportInContext(context, "member_roles");
 export const runMemberDurationReportAction = async (context: RequestContext) =>
 	executeReportInContext(context, "member_duration");
+
+export const runMemberParticipationReportAction = async (
+	context: RequestContext,
+	year: number,
+) => executeReportInContext(context, "member_participation", year);

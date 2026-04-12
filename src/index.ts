@@ -1,11 +1,12 @@
 import "dotenv/config";
-import { select } from "@inquirer/prompts";
+import { select, input } from "@inquirer/prompts";
 import { loginInContext } from "./actions/login.action.js";
 import {
 	runMemberRolesReportAction,
 	runMembersReportAction,
 	runRolesReportAction,
 	runMemberDurationReportAction,
+	runMemberParticipationReportAction,
 } from "./actions/reports.action.js";
 import { RequestContext } from "./utils/requests/context.utils.js";
 
@@ -56,6 +57,12 @@ async function main() {
 						"Calculates total time each member stayed in the EJ based on membership history.",
 				},
 				{
+					name: "Participação em Eventos (Report)",
+					value: "member_participation",
+					description:
+						"Returns all events that a member participated in for a specific year.",
+				},
+				{
 					name: "Sair / Exit",
 					value: "exit",
 				},
@@ -75,6 +82,19 @@ async function main() {
 			case "member_duration":
 				await context.runWithContext([runMemberDurationReportAction]);
 				break;
+			case "member_participation": {
+				const currentYear = new Date().getFullYear().toString();
+				const yearInput = await input({
+					message: "Qual o ano do relatório?",
+					default: currentYear,
+					validate: (val) =>
+						!Number.isNaN(Number(val)) || "Por favor, insira um ano válido.",
+				});
+				await context.runWithContext([
+					(ctx) => runMemberParticipationReportAction(ctx, Number(yearInput)),
+				]);
+				break;
+			}
 			case "exit":
 				exit = true;
 				console.log("Goodbye!");
