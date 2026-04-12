@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { inspect } from "node:util";
 
 const LOGS_DIR = path.resolve("logs");
 const ERROR_LOG_FILE = path.join(LOGS_DIR, "api_errors.log");
@@ -18,7 +19,10 @@ export function logError(error: any, context?: string) {
 	const errorMessage =
 		error instanceof Error ? error.stack : JSON.stringify(error, null, 2);
 
-	const logEntry = `[${timestamp}]\n${contextLine}${errorMessage}\n${"-".repeat(50)}\n`;
+	const logEntry = `[${timestamp}]\n${contextLine}${errorMessage}\n${inspect(
+		error,
+		{ depth: null },
+	)}\n${"-".repeat(50)}\n`;
 
 	try {
 		fs.appendFileSync(ERROR_LOG_FILE, logEntry, "utf8");

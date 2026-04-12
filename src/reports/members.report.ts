@@ -30,7 +30,9 @@ export async function fetchMembersForEJ(
 	const snapshotDate = new Date().toISOString().split("T")[0] as string; // YYYY-MM-DD
 
 	const allCores = context.get<any[]>("cores") || [];
-	const matchingCore = allCores.find((c) => c.resource_id === ej.fetched_core_id);
+	const matchingCore = allCores.find(
+		(c) => c.resource_id === ej.fetched_core_id,
+	);
 	const nucleo = matchingCore?.core_name || "N/A";
 	const federacao = matchingCore?.federation_name || "N/A";
 

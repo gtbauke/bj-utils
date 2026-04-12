@@ -1,3 +1,4 @@
+import { inspect } from "node:util";
 import { logError } from "../utils/logger.utils.js";
 import {
 	AUTH_CONTEXT_KEY,
@@ -36,6 +37,13 @@ export async function fetchAllPaginated(
 				const errorMsg = `Fetch failed with status: ${response.status} ${response.statusText}`;
 				console.error(errorMsg);
 				logError(errorMsg, `fetchAllPaginated: ${url}?${params.toString()}`);
+
+				const apiErrorDetails = await response.text();
+				logError(
+					`API error details: ${apiErrorDetails}`,
+					`fetchAllPaginated: ${url}?${params.toString()} (API error details)`,
+				);
+
 				break;
 			}
 
