@@ -8,3 +8,4 @@ export const PASSWORD_CONTEXT_KEY = "password" as const;
 export const GOOGLE_SHEET_ID_CONTEXT_KEY = "google_sheet_id" as const;
 export const GOOGLE_EMAIL_CONTEXT_KEY = "google_email" as const;
 export const GOOGLE_KEY_CONTEXT_KEY = "google_key" as const;
+export const OUTPUT_MODE_CONTEXT_KEY = "output_mode" as const;

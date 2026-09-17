@@ -9,6 +9,7 @@ import {
 	runMemberParticipationReportAction,
 } from "./actions/reports.action.js";
 import { RequestContext } from "./utils/requests/context.utils.js";
+import { OUTPUT_MODE_CONTEXT_KEY } from "./utils/requests/constants.utils.js";
 
 async function main() {
 	console.log("=========================================");
@@ -17,6 +18,12 @@ async function main() {
 
 	console.log("🔐 Authenticating...");
 	const context = RequestContext.createEnvAuthContext();
+
+	const isLocal = process.argv.includes("--local") || process.argv.includes("-l");
+	if (isLocal) {
+		context.set(OUTPUT_MODE_CONTEXT_KEY, "local");
+		console.log("📂 Local Mode Enabled: Output will be saved to CSV files.\n");
+	}
 
 	try {
 		await context.runWithContext([loginInContext]);

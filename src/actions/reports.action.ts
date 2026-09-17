@@ -1,10 +1,11 @@
-import { appendRowsToSheet } from "../api/google-sheets.api.js";
 import { syncFederatedEJs } from "../api/portal.api.js";
 import { fetchMemberRolesForEJ } from "../reports/member_roles.report.js";
 import { fetchMemberDurationForEJ } from "../reports/member_duration.report.js";
 import { fetchMembersForEJ } from "../reports/members.report.js";
 import { fetchRoleHistoriesForEJ } from "../reports/roles.report.js";
 import { fetchMemberParticipationForEJ } from "../reports/member_participation.report.js";
+import { saveReportToCsv } from "../utils/csv.utils.js";
+import { OUTPUT_MODE_CONTEXT_KEY } from "../utils/requests/constants.utils.js";
 import type { RequestContext } from "../utils/requests/context.utils.js";
 
 type ReportType =
@@ -92,7 +93,6 @@ async function executeReportInContext(
 	);
 
 	if (allData.length > 0) {
-		console.log("☁️  Appending rows to Google Sheets...");
 		let sheetTitle = "";
 		switch (reportType) {
 			case "members":
@@ -111,7 +111,18 @@ async function executeReportInContext(
 				sheetTitle = "Member Participation";
 				break;
 		}
-		await appendRowsToSheet(context, sheetTitle, allData);
+
+		const outputMode = context.has(OUTPUT_MODE_CONTEXT_KEY)
+			? context.get<string>(OUTPUT_MODE_CONTEXT_KEY)
+			: "sheets";
+
+		if (outputMode === "local") {
+			await saveReportToCsv(sheetTitle, allData);
+		} else {
+			console.log("☁️  Appending rows to Google Sheets...");
+			const { appendRowsToSheet } = await import("../api/google-sheets.api.js");
+			await appendRowsToSheet(context, sheetTitle, allData);
+		}
 	} else {
 		console.log("⚠️ No data found to append.");
 	}
